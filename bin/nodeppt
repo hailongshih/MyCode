@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var fs = require('fs');
+var path = require('path');
+var join = path.join;
+
+
+var root = join(__dirname, '../');
+var nodePPT = require(join(root, './lib/nodePPT'));
+
+
+var opts = {
+    '-v': '--version',
+    '-p': '--port',
+    '-d': '--dir',
+    '-f': '--file',
+    '-o': '--output',
+    '-a': '--all'
+}
+
+var argv = parseArgs(process.argv);
+var action = argv.slice(2, 3).toString();
+
+if (typeof nodePPT[action] === 'function') {
+    nodePPT.cwd = process.cwd();
+    nodePPT[action](argv.slice(3));
+} else {
+    nodePPT.help();
+}
+
+function parseArgs(args) {
+    return args.map(function(v) {
+        if (v in opts) {
+            return opts[v];
+        }
+        return v;
+    });
+}
